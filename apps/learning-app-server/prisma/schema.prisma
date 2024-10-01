@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Teacher {
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  email      String?
+  id         String     @id @default(cuid())
+  name       String?
+  password   String?
+  updatedAt  DateTime   @updatedAt
+}
+
+model Activity {
+  assignedDate DateTime?
+  createdAt    DateTime  @default(now())
+  id           String    @id @default(cuid())
+  scores       Score[]
+  teacher      Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId    String?
+  templateId   String?
+  updatedAt    DateTime  @updatedAt
+}
+
+model ActivityTemplate {
+  createdAt       DateTime @default(now())
+  description     String?
+  id              String   @id @default(cuid())
+  name            String?
+  templateContent Json?
+  updatedAt       DateTime @updatedAt
+}
+
+model Score {
+  activity     Activity? @relation(fields: [activityId], references: [id])
+  activityId   String?
+  createdAt    DateTime  @default(now())
+  dateRecorded DateTime?
+  id           String    @id @default(cuid())
+  score        Float?
+  student      Student?  @relation(fields: [studentId], references: [id])
+  studentId    String?
+  updatedAt    DateTime  @updatedAt
+}
+
+model Student {
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  name      String?
+  scores    Score[]
+  updatedAt DateTime @updatedAt
+}
